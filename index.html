@@ -33,13 +33,28 @@
     <div id="map"></div>
 
     <script>    
-        var map = L.map('map').setView([29.6436, -82.3549], 13);
-        
+        var map = L.map('map').setView([0, 0], 2); 
+
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
+        fetch('map.geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    onEachFeature: function (feature, layer) {
+                        if (feature.properties) {
+                            layer.bindPopup("City: " + feature.properties.City + 
+                                            "<br>Place: " + feature.properties.Place +
+                                            "<br>Population in 1985: " + feature.properties.Pop_1985);
+                                            
+                        }
+                    }
+                }).addTo(map);
+            })
+            .catch(error => console.error('Error:', error));
 
     </script>
 
